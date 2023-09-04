@@ -1,0 +1,25 @@
+version: "3"
+
+tasks:
+  dev:
+    cmds:
+      - air
+  docs:
+    cmds:
+      - swag init --dir ./cmd/http,./internal
+  build:
+    cmds:
+      - go build -o http-server cmd/http/main.go
+  start:
+    cmds:
+      - ./http-server
+  install:
+    cmds:
+      - go install github.com/swaggo/swag/cmd/swag@latest
+      - go install github.com/go-task/task/v3/cmd/task@latest
+  test_upload_document:
+    cmds:
+      - go run dummy/uploadDocument/upload.go
+  test_login:
+    cmds:
+      - go run dummy/user/test_login.go
