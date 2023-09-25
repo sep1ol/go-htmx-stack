@@ -2,11 +2,16 @@ package components
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/sep1ol/new-stack/utils"
+	"github.com/sep1ol/new-stack/pkg/structs"
 )
 
-func TodosList(Ctx *fiber.Ctx, Todos []utils.Todo) error {
-	return Ctx.Render("html/todos-list", fiber.Map{
-		"Todos": Todos,
+type TodosListProps struct {
+	Todos []structs.Todo
+	Ctx   *fiber.Ctx
+}
+
+func TodosList(props TodosListProps) error {
+	return props.Ctx.Render("todos-list", fiber.Map{
+		"Todos": props.Todos,
 	})
 }

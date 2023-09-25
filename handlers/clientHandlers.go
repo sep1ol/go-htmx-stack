@@ -1,4 +1,4 @@
-package todosClient
+package handlers
 
 import (
 	"database/sql"
@@ -9,8 +9,7 @@ import (
 	"github.com/sep1ol/new-stack/services"
 )
 
-func CreateRoutes(app *fiber.App, db *sql.DB) {
-
+func RegisterClientHandlers(app *fiber.App, db *sql.DB) {
 	app.Get("/", func(ctx *fiber.Ctx) error {
 		todos, err := services.Todos(db).GetTodos()
 		if err != nil {
@@ -31,8 +30,4 @@ func CreateRoutes(app *fiber.App, db *sql.DB) {
 			},
 		)
 	})
-
-	// app.Get("/render-todos", func(ctx *fiber.Ctx) error {
-	// 	return components.TodosList(ctx, todos)
-	// })
 }

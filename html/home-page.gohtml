@@ -1,5 +1,5 @@
 <div>
-  {{template "html/header" .}}
+  {{template "Header" .}}
 
   <div class="bg-white p-8 rounded-lg shadow-md w-80">
     <h2 class="text-2xl font-bold mb-8 text-center text-secondary">
@@ -8,10 +8,10 @@
 
     <form
       id="todo-form"
-      hx-post="/todo/add"
+      hx-post="/api/todos/add"
       hx-trigger="submit"
       hx-target="#todos-list"
-      hx-swap="innerHTML"
+      hx-swap="outerHTML"
     >
       <div class="mb-5">
         <label for="todo" class="block mb-2">New Task</label>
@@ -27,20 +27,9 @@
         class="w-full py-2 px-4 bg-secondary text-white rounded bg-blue-500 flex justify-center items-center relative"
       >
         <span>Add Task</span>
-        <img
-          id="indicator"
-          class="htmx-indicator absolute right-2"
-          src="/spinner_24.gif"
-        />
       </button>
     </form>
 
-    <div
-      id="todos-list"
-      hx-get="/render-todos"
-      hx-target="this"
-      hx-swap="innerHTML"
-      hx-trigger="load"
-    ></div>
+    {{template "TodosList" .}}
   </div>
 </div>

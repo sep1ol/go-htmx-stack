@@ -1,33 +1,40 @@
 package main
 
 import (
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/template/html/v2"
-	todoAPI "github.com/sep1ol/new-stack/API"
-	todoClient "github.com/sep1ol/new-stack/client"
-	"github.com/sep1ol/new-stack/utils"
+	"fmt"
+	"os"
+
+	"github.com/sep1ol/new-stack/cmd/http"
+	"github.com/sep1ol/new-stack/config"
+	"github.com/sep1ol/new-stack/pkg/shutdown"
 )
 
 func main() {
-	engine := html.New("./client", ".html")
-	app := fiber.New(fiber.Config{
-		Views: engine,
-	})
+	// Exit code for shutdown gracefully
+	var exitCode int
+	defer func() {
+		os.Exit(exitCode)
+	}()
 
-	app.Static("/", "./public")
-
-	configureRoutes(app)
-
-	app.Listen(":3000")
-}
-
-func configureRoutes(app *fiber.App) {
-	todos := []utils.Todo{
-		{ID: 1, Task: "Todo 1", Completed: true},
-		{ID: 2, Task: "Todo 2", Completed: false},
-		{ID: 3, Task: "Todo 3", Completed: false},
+	// Load configs
+	env, err := config.LoadConfig()
+	if err != nil {
+		fmt.Printf("error: %v", err)
+		exitCode = 1
+		return
 	}
 
-	todoClient.CreateRoutes(app, todos)
-	todoAPI.CreateRoutes(app, todos)
+	// Server starting point
+	cleanup, err := http.ServeHTTP(env)
+
+	// Cleanup after terminated
+	defer cleanup()
+	if err != nil {
+		fmt.Printf("error: %v", err)
+		exitCode = 1
+		return
+	}
+
+	// Server shutdown gracefully
+	shutdown.Gracefully()
 }
