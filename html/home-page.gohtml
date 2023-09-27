@@ -1,35 +1,41 @@
+{{ define "home-page" }}
 <div>
-  {{template "Header" .}}
+  {{ template "header" }}
 
   <div class="bg-white p-8 rounded-lg shadow-md w-80">
     <h2 class="text-2xl font-bold mb-8 text-center text-secondary">
       Todo List
     </h2>
+    {{ template "create-todo-form" }}
 
-    <form
-      id="todo-form"
-      hx-post="/api/todos/add"
-      hx-trigger="submit"
-      hx-target="#todos-list"
-      hx-swap="outerHTML"
-    >
-      <div class="mb-5">
-        <label for="todo" class="block mb-2">New Task</label>
-        <input
-          type="text"
-          name="task"
-          class="w-full p-2 border border-gray-300 rounded"
-          required
-        />
-      </div>
-      <button
-        type="submit"
-        class="w-full py-2 px-4 bg-secondary text-white rounded bg-blue-500 flex justify-center items-center relative"
-      >
-        <span>Add Task</span>
-      </button>
-    </form>
-
-    {{template "TodosList" .}}
+    {{template "todos-list" .}}
   </div>
 </div>
+{{end}}
+
+{{ define "create-todo-form" }}
+<form
+  id="todo-form"
+  hx-post="/api/todos/add"
+  
+  hx-trigger="submit"
+  hx-target="#todos-list"
+  hx-swap="beforeend"
+>
+  <div class="mb-5">
+    <label for="todo" class="block mb-2">New Task</label>
+    <input
+      type="text"
+      name="task"
+      class="w-full p-2 border border-gray-300 rounded"
+      required
+    />
+  </div>
+  <button
+    type="submit"
+    class="w-full py-2 px-4 bg-secondary text-white rounded bg-blue-500 flex justify-center items-center relative"
+  >
+    <span>Add Task</span>
+  </button>
+</form>
+{{ end }}

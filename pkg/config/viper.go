@@ -5,6 +5,7 @@ import (
 	"os"
 	"reflect"
 
+	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
 )
 
@@ -15,6 +16,12 @@ type EnvVars struct {
 }
 
 func LoadConfig() (config EnvVars, err error) {
+
+	err = godotenv.Load("app.env")
+	if err != nil {
+		fmt.Println("Error loading .env file")
+		return
+	}
 
 	env := os.Getenv("GO_ENV")
 	if env == "" {

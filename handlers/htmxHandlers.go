@@ -6,14 +6,14 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/sep1ol/new-stack/client/components"
+	"github.com/sep1ol/new-stack/components"
 	"github.com/sep1ol/new-stack/pkg/structs"
 	"github.com/sep1ol/new-stack/services"
 )
 
-func RegisterAPIHandlers(app *fiber.App, db *sql.DB) {
+func UseHTMXHandlers(app *fiber.App, db *sql.DB) {
 	app.Post("/api/todos/add", func(ctx *fiber.Ctx) error {
-		fmt.Println(">> [POST]: /api/todos/add")
+		fmt.Println(">> [POST]: Create Todo")
 
 		task := ctx.FormValue("task")
 		if task == "" {
@@ -21,7 +21,7 @@ func RegisterAPIHandlers(app *fiber.App, db *sql.DB) {
 			return ctx.Status(fiber.StatusBadRequest).SendString("Task is required")
 		}
 
-		todos, err := services.Todos(db).AddTodo(
+		addedTodo, err := services.Todos(db).AddTodo(
 			structs.AddTodo{
 				Task:      task,
 				Completed: false,
@@ -29,18 +29,20 @@ func RegisterAPIHandlers(app *fiber.App, db *sql.DB) {
 		)
 		if err != nil {
 			fmt.Println(err)
+			return ctx.SendStatus(fiber.StatusInternalServerError)
 		}
 
 		fmt.Println(">> Todo added.")
 
-		return components.TodosList(components.TodosListProps{
-			Ctx:   ctx,
-			Todos: todos,
-		})
+		return components.TodoItem(
+			components.TodoItemProps{
+				Ctx:  ctx,
+				Todo: *addedTodo,
+			})
 	})
 
 	app.Delete("/api/todos/remove/:id", func(ctx *fiber.Ctx) error {
-		fmt.Println(">> [DELETE]: /api/todos/remove/:id")
+		fmt.Println(">> [DELETE]: Todo by ID")
 		id, _ := strconv.Atoi(ctx.Params("id"))
 
 		err := services.Todos(db).DeleteTodo(id)

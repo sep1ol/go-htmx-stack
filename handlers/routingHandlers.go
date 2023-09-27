@@ -1,16 +1,18 @@
-package todosClient
+package handlers
 
 import (
 	"database/sql"
 	"fmt"
+	"html/template"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/sep1ol/new-stack/client/components"
+	"github.com/sep1ol/new-stack/components"
 	"github.com/sep1ol/new-stack/services"
 )
 
-func CreateRoutes(app *fiber.App, db *sql.DB) {
+var bootstrap *template.Template
 
+func UseRoutingHandlers(app *fiber.App, db *sql.DB) {
 	app.Get("/", func(ctx *fiber.Ctx) error {
 		todos, err := services.Todos(db).GetTodos()
 		if err != nil {
@@ -19,20 +21,11 @@ func CreateRoutes(app *fiber.App, db *sql.DB) {
 			return ctx.SendStatus(fiber.StatusInternalServerError)
 		}
 
-		fmt.Println(">> Fetching successful.")
-		fmt.Println(todos)
-		fmt.Println(">> Rendering App...")
-
 		return components.HomePage(
 			components.HomePageProps{
-				Todos:  todos,
-				Layout: "layout",
-				Ctx:    ctx,
+				Todos: todos,
+				Ctx:   ctx,
 			},
 		)
 	})
-
-	// app.Get("/render-todos", func(ctx *fiber.Ctx) error {
-	// 	return components.TodosList(ctx, todos)
-	// })
 }

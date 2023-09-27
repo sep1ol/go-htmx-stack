@@ -17,11 +17,11 @@ func Todos(db *sql.DB) *TodosService {
 	}
 }
 
-func (s *TodosService) AddTodo(todo structs.AddTodo) ([]structs.Todo, error) {
+func (s *TodosService) AddTodo(todo structs.AddTodo) (*structs.Todo, error) {
 	query := `
-	INSERT INTO todos (task, completed)
-	VALUES ($1, $2)
-	RETURNING id;
+		INSERT INTO todos (task, completed)
+		VALUES ($1, $2)
+		RETURNING id;
 	`
 
 	var ID int
@@ -31,7 +31,11 @@ func (s *TodosService) AddTodo(todo structs.AddTodo) ([]structs.Todo, error) {
 		return nil, err
 	}
 
-	return s.GetTodos()
+	return &structs.Todo{
+		ID:        ID,
+		Task:      todo.Task,
+		Completed: todo.Completed,
+	}, nil
 }
 
 func (s *TodosService) GetTodos() ([]structs.Todo, error) {

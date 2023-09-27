@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/sep1ol/new-stack/cmd/http"
-	"github.com/sep1ol/new-stack/config"
+	"github.com/sep1ol/new-stack/pkg/config"
 	"github.com/sep1ol/new-stack/pkg/shutdown"
 )
 
